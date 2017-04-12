@@ -1,16 +1,19 @@
 <?php
 include_once("dbconnection.php");
 
+$response = array("Server: ", "");
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    echo "Post request sent.";
+    // Prepare response
+    $response[0].= "Post request sent.";
 
     if(!empty($_FILES)) {
-        echo "File detected.";
+        $response[0].= "File detected.";
         $image = $_FILES;
 
         // Configuration
-        $imageLimitHeight = 2560;
-        $imageLimitWidth = 2560;
+        $imageLimitHeight = 256;
+        $imageLimitWidth = 256;
         $imageLimitSize = 500000;
         $targetDir = "uploads/";
         $targetFileName = uniqid() . "_" . basename($image['file']['name']);
@@ -20,68 +23,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if file is an image
         $check = getimagesize($image["file"]["tmp_name"]);
         if ($check !== false) {
-            echo "File is image type: " . $check["mime"] . ".";
+            $response[0].= "File is image type: " . $check["mime"] . ".";
             $allowUpload = true;
         } else {
-            echo "ERR: File is not an image.";
+            $response[0].= "ERR: File is not an image.";
             $allowUpload = false;
         }
 
         // Check height and width
         list($imageWidth, $imageHeight) = getimagesize($image["file"]["tmp_name"]);
         if ($imageHeight > $imageLimitHeight || $imageWidth > $imageLimitWidth) {
-            echo "ERR: File pixel size too large: " . $imageWidth . "x" . $imageHeight;
+            $response[0].= "ERR: File pixel size too large: " . $imageWidth . "x" . $imageHeight;
             $allowUpload = false;
         } else {
-            echo "File pixel size is approved.";
+            $response[0].= "File pixel size is approved.";
         }
 
         // Check file size
         if ($image["file"]["size"] > $imageLimitSize) {
-            echo "ERR: File size too large.";
+            $response[0].= "ERR: File size too large.";
             $allowUpload = false;
         } else {
-            echo "Image size of " . $image["file"]["size"] . " approved.";
+            $response[0].= "Image size of " . $image["file"]["size"] . " approved.";
         }
 
         // Check if file already exists
         if (file_exists($targetFile)) {
-            echo "ERR: File already exists.";
+            $response[0].= "ERR: File already exists.";
             $allowUpload = false;
         }
 
         // Allow certain file formats
         $imageFileType = exif_imagetype($image['file']['tmp_name']);
         if($imageFileType !== IMAGETYPE_PNG && $imageFileType !== IMAGETYPE_JPEG && $imageFileType !== IMAGETYPE_GIF) {
-            echo "ERR: only JPG, JPEG, PNG & GIF files are allowed.";
+            $response[0].= "ERR: only JPG, JPEG, PNG & GIF files are allowed.";
             $allowUpload = false;
         }
 
         // Finally check if we can upload file
         if (!$allowUpload) {
-            echo "ERR: File is not allowed to be uploaded.";
+            $response[0].= "ERR: File is not allowed to be uploaded.";
         } else {
             if (move_uploaded_file($image["file"]["tmp_name"], $targetFile)) {
-                echo "Uploaded successfully to: " . $targetFile;
+                $response[0].= "Uploaded successfully to: " . $targetFile;
 
                 // Insert into Database
                 if(mysqli_query($con, $query)){
-                    echo "Uploaded successfully to database.";
+                    $response[0].= "Uploaded successfully to database.";
+
+                    // Set target file to final response array
+                    $response[1] = $targetFile;
                 } else{
-                    echo "ERR: File could not be inserted to database.";
+                    $response[0].= "ERR: File could not be inserted to database.";
                 }
             } else {
-                echo "ERR: Uploading file failed.";
+                $response[0].= "ERR: Uploading file failed.";
             }
 
             mysqli_close($con);
         }
 
     } else {
-        echo "ERR: There is no file.";
+        $response[0].= "ERR: There is no file.";
     }
 
 } else {
-    echo "ERR: Not a post request.";
+    $response[0].= "ERR: Not a post request.";
 }
+
+echo json_encode($response);
 ?>

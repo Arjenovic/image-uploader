@@ -11,6 +11,4 @@ $con = mysqli_connect("$servername","$username","$password","$databasename");
 if ($con->connect_error) {
     die("ERR: We are currently busy with website maintenance. We'll be back soon!" . $con->connect_error);
 }
-
-echo "Connected successfully.";
 ?>
