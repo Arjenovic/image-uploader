@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<?php error_reporting(E_ALL); ?>
 <head>
         <title>image-uploader</title>
         <meta charset="UTF-8">
@@ -11,9 +10,13 @@
         <script defer src="uploader.js"></script>
     </head>
     <body>
+        <!-- File upload -->
         <img id="file-upload-image" src="http://placehold.it/256x256" alt="placeholder" height="256" width="256">
-        <form method="post">
-            <input type="file" id="file-upload" name="file-upload" onchange="handleFile(this.files)" style="visibility: hidden"/>
-        </form>
+        <!-- File upload Tools -->
+        <div style="visibility: hidden; position: absolute; top: -9999px; left: -9999px;">
+            <input type="file" id="file-upload" name="file-upload" onchange="handleFile(this.files)"/>
+            <img id="file-img">
+            <canvas id="file-canvas"></canvas>
+        </div>
     </body>
 </html>

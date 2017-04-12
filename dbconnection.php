@@ -1,6 +1,6 @@
 <?php
 $servername = "localhost";
-$username = "root"; //admin account is named root usually
+$username = "root";
 $password = "";
 $databasename = "php_image_uploader";
 
