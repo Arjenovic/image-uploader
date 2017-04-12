@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $imageLimitWidth = 256;
         $imageLimitSize = 500000;
         $targetDir = "uploads/";
-        $targetFileName = uniqid() . "_" . basename($image['file']['name']);
+        $targetFileName = uniqid() . rand() . ".png";
         $targetFile = $targetDir . $targetFileName;
         $query = "INSERT INTO php_image_pictures(id, url) VALUES(NULL, '$targetFileName');";
 

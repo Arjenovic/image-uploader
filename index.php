@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+    <head>
         <title>image-uploader</title>
         <meta charset="UTF-8">
         <meta name="description" content="image-uploader">
